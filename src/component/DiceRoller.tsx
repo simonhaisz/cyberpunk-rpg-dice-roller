@@ -1,32 +1,36 @@
 import React, { useState } from "react";
-import Input from "@material-ui/core/Input";
 import Slider from "@material-ui/core/Slider";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import styled from "styled-components";
 import { rollDice } from "../dice/dice-pool";
+import DiceTable from "./DiceTable";
 
 const Root = styled.div`
     display: flex;
     flex-flow: column;
     align-items: stretch;
     justify-content: stretch;
-    max-width: 400px;
+    max-width: 600px;
 `;
 
-const DicePoolPanel = styled.div`
+const StyledSliderPanel = styled.div`
     display: flex;
     flex-flow: row;
-    align-items: stretch;
-    justify-content: start;
+    align-items: flex-end;
+    justify-content: flex-start;
+    margin-top: 40px;
 `;
 
-const DiceSlider = styled(Slider)``;
+const StyledLabel = styled(Typography)`
+    flex-grow: 0;
+    min-width: 100px;
+    padding-bottom: 3px;
+`;
 
-const DiceInput = styled(Input)`
-    max-width: 40px;
-    margin-left: 5px;
+const StyledSlider = styled(Slider)`
+    flex-grow: 1;
 `;
 
 const HitCountText = styled(TextField)`
@@ -42,26 +46,25 @@ const Separator = styled.div`
 
 const DiceRoller: React.FC = () => {
     const [dicePoolSize, setDicePoolSize] = useState(6);
+    const [threshold, setThreshold] = useState(0);
     const [hitCount, setHitCount] = useState(0);
     const [glitch, setGlitch] = useState(false);
 
-    const handleSliderChange = (_event: React.ChangeEvent<{}>, newValue: number | number[]) => {
+    const handleDicePoolChange = (_event: React.ChangeEvent<{}>, newValue: number | number[]) => {
         if (Array.isArray(newValue)) {
             throw new Error(`Dice pool size cannot be an array`);
         }
         setDicePoolSize(newValue);
     };
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = Number(event.target.value);
-        if (isNaN(newValue)) {
-            alert(`Dice pool size must be a number - ignoring '${event.target.value}'`);
-        } else {
-            setDicePoolSize(newValue);
+    const handleThresholdChange = (_event: React.ChangeEvent<{}>, newValue: number | number[]) => {
+        if (Array.isArray(newValue)) {
+            throw new Error(`Threshold cannot be an array`);
         }
+        setThreshold(newValue);
     };
 
-    const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleButtonClick = (_event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         const result = rollDice(dicePoolSize);
         setHitCount(result.hitCount);
         setGlitch(result.glitch);
@@ -69,32 +72,38 @@ const DiceRoller: React.FC = () => {
 
     let glitchComponent: JSX.Element | null = null;
     if (glitch) {
-        glitchComponent = <Typography color="error" variant="h3">{hitCount === 0 ? "CRITICAL GLITCH" : "GLITCH"}</Typography>
+        const critical = hitCount === 0;
+        glitchComponent = <Typography color="error" variant={critical ? "h2" : "h3"}>{critical ? "CRITICAL GLITCH" : "GLITCH"}</Typography>
     }
 
     return (
         <Root>
-            <Typography id="dice-pool-size-slider" gutterBottom>Dice Pool</Typography>
-            <DicePoolPanel>
-                <DiceSlider
+            <StyledSliderPanel>
+                <StyledLabel>Dice Pool</StyledLabel>
+                <StyledSlider
+                    id="dice-pool-slider"
                     value={dicePoolSize}
-                    onChange={handleSliderChange}
+                    onChange={handleDicePoolChange}
                     step={1}
                     min={1}
-                    max={36}
+                    max={12}
+                    valueLabelDisplay="on"
                     />
-                    <DiceInput
-                        value={dicePoolSize}
-                        margin="dense"
-                        onChange={handleInputChange}
-                        inputProps={{
-                            step: 1,
-                            min: 1,
-                            max: 36,
-                            type: "number"
-                        }}
+            </StyledSliderPanel>
+            <Separator />
+            <StyledSliderPanel>
+                <StyledLabel>Threshold</StyledLabel>
+                <StyledSlider
+                    value={threshold}
+                    onChange={handleThresholdChange}
+                    step={1}
+                    min={0}
+                    max={12}
+                    valueLabelDisplay="on"
                     />
-            </DicePoolPanel>
+            </StyledSliderPanel>
+            <Separator />
+            <DiceTable poolSize={dicePoolSize} />
             <Separator />
             <Button size="large" onClick={handleButtonClick} variant="outlined">Roll Dice</Button>
             <Separator />

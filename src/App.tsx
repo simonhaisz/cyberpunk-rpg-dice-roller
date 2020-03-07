@@ -3,7 +3,9 @@ import DiceRoller from "./component/DiceRoller";
 
 const App: React.FC = () => {
   return (
-    <DiceRoller />
+    <React.Fragment>
+      <DiceRoller />
+    </React.Fragment>
   );
 }
 
