@@ -1,0 +1,12 @@
+{
+    "name": "cyberpunk-rpg-dice-roll-table-generator",
+    "version": "0.1.0",
+    "private": true,
+    "devDependencies": {
+        "@types/node": "12.12.2",
+        "typescript": "~3.7.2"
+    },
+    "scripts": {
+        
+    }
+}
