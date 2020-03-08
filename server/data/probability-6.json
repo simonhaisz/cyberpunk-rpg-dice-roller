@@ -1,0 +1,37 @@
+[
+    {
+        "hits": 0,
+        "probability": 0.0877914951989026,
+        "glitchProbability": 0.014874828532235939
+    },
+    {
+        "hits": 1,
+        "probability": 0.26337448559670784,
+        "glitchProbability": 0.02726337448559671
+    },
+    {
+        "hits": 2,
+        "probability": 0.3292181069958848,
+        "glitchProbability": 0.016718106995884774
+    },
+    {
+        "hits": 3,
+        "probability": 0.2194787379972565,
+        "glitchProbability": 0.003429355281207133
+    },
+    {
+        "hits": 4,
+        "probability": 0.0823045267489712,
+        "glitchProbability": 0
+    },
+    {
+        "hits": 5,
+        "probability": 0.01646090534979424,
+        "glitchProbability": 0
+    },
+    {
+        "hits": 6,
+        "probability": 0.0013717421124828531,
+        "glitchProbability": 0
+    }
+]

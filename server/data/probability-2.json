@@ -1,0 +1,17 @@
+[
+    {
+        "hits": 0,
+        "probability": 0.4444444444444444,
+        "glitchProbability": 0.19444444444444445
+    },
+    {
+        "hits": 1,
+        "probability": 0.4444444444444444,
+        "glitchProbability": 0.1111111111111111
+    },
+    {
+        "hits": 2,
+        "probability": 0.1111111111111111,
+        "glitchProbability": 0
+    }
+]

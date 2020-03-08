@@ -1,4 +1,4 @@
-import { generateDiceRollTable } from "../../client/src/dice/dice-tables";
+import { generateDiceRollTable } from "./dice-table";
 
 const dicePoolSize = parseInt(process.argv[2]);
 

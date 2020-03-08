@@ -2,11 +2,16 @@
     "name": "cyberpunk-rpg-dice-roll-table-generator",
     "version": "0.1.0",
     "private": true,
+    "dependencies": {
+        "fs-extra": "8.1.0"
+    },
     "devDependencies": {
-        "@types/node": "12.12.2",
+        "@types/fs-extra": "8.1.0",
+        "@types/node": "13.9.0",
         "typescript": "~3.7.2"
     },
     "scripts": {
-        
+        "tables": "node out/generate-tables",
+        "probabilities": "node out/compute-probabilities"
     }
 }
