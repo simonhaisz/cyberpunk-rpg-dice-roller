@@ -1,4 +1,6 @@
-import { parentPort } from "worker_threads";
+import { parentPort, workerData } from "worker_threads";
+import { join } from "path";
+import { writeJsonSync } from "fs-extra";
 import { Request } from "./message";
 import { generateDiceRollTableSection } from "./dice-table";
 
@@ -12,5 +14,7 @@ parentPort.on("message", (request: Request) => {
     }
     const { dicePoolSize, section } = request;
     const tableSection = generateDiceRollTableSection(dicePoolSize, section);
-    parentPort.postMessage({ section: tableSection });
+    const sectionPath = join(workerData.dataDir, `table-section-${tableSection.dicePoolSize}.${tableSection.section}.json`);
+    writeJsonSync(sectionPath, tableSection, { encoding: "utf8", spaces: 4});
+    parentPort.postMessage({ sectionPath });
 });

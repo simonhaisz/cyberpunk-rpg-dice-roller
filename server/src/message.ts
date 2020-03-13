@@ -6,5 +6,5 @@ export type Request = {
 };
 
 export type Response = {
-    section: RollTableSection;
+    sectionPath: string;
 };

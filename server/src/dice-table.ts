@@ -99,10 +99,10 @@ export function generateDiceRollTableSection(dicePoolSize: number, section: numb
         }
         results.push([...resultSet]);
         
-        if ((Date.now() - runTimer) >= 1000) {
-            runTimer = Date.now();
-            secondsCounter++;
-            console.log(`Generating D6 table section ${section} of size ${dicePoolSize} for ${secondsCounter} seconds...`);
+        const currentTime = Date.now();
+        if ((currentTime - runTimer) >= 1000) {
+            runTimer = currentTime;
+            console.log(`Generating D6 table section ${section} of size ${dicePoolSize} for ${++secondsCounter} seconds...`);
         }
     }
     const endTime = Date.now();

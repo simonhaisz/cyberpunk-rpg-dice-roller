@@ -12,6 +12,6 @@
     },
     "scripts": {
         "tables": "node out/generate-tables",
-        "probabilities": "node out/compute-probabilities"
+        "probabilities": "node --max-old-space-size=16384 out/compute-probabilities"
     }
 }

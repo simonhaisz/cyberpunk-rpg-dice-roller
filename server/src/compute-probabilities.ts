@@ -22,7 +22,7 @@ if (process.argv.length <= 2 || process.argv.length > 4) {
         if (existsSync(filePath)) {
             console.log(`'${filePath}' already exists - skipping`);
         } else {
-            const workerPool = new WorkerPool();
+            const workerPool = new WorkerPool(dataDir);
             workerPool.compute(dicePoolSize)
                 .then(table => {
                     const probabilities = computeProbabilities(table);
