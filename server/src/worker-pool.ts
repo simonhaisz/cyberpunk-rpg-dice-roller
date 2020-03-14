@@ -1,6 +1,4 @@
 import { Worker } from "worker_threads";
-import { readJsonSync } from "fs-extra";
-import { RollTable, RollTableSection, assembleDiceRollTableSections } from "./dice-table";
 import { Response } from "./message";
 
 export class WorkerPool {
@@ -12,21 +10,20 @@ export class WorkerPool {
         this.dataDir = dataDir;
     }
 
-    async compute(dicePoolSize: number): Promise<RollTable> {
-        const sectionPromises: Promise<RollTableSection>[] = [];
+    async compute(dicePoolSize: number): Promise<string[]> {
+        const sectionPromises: Promise<string>[] = [];
         for (let section = 1; section <= 6; section++) {
             sectionPromises.push(this.startWorker(dicePoolSize, section));
         }
-        const sections = await Promise.all(sectionPromises);
-        return assembleDiceRollTableSections(dicePoolSize, sections);
+        return Promise.all(sectionPromises);
     }
 
-    private async startWorker(dicePoolSize: number, section: number): Promise<RollTableSection> {
+    private async startWorker(dicePoolSize: number, section: number): Promise<string> {
         return new Promise((resolve, reject) => {
             const worker = new Worker("./out/probability-worker.js", { workerData: { dataDir: this.dataDir } });
             this.workers.push(worker);
             worker.on("message", (response: Response) => {
-                resolve(readJsonSync(response.sectionPath, { encoding: "utf8" }));
+                resolve(response.sectionPath);
             });
             worker.on("error", error => {
                 reject(error);

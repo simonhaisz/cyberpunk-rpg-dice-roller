@@ -1,3 +1,6 @@
+import { join } from "path";
+import { promises as fs } from "fs";
+
 export type RollTable = {
     dicePoolSize: number;
     results: number[][];
@@ -71,8 +74,10 @@ export type RollTableSection = {
     results: number[][];
 }
 
-export function generateDiceRollTableSection(dicePoolSize: number, section: number): RollTableSection {
+export async function generateDiceRollTableSection(dicePoolSize: number, section: number, dataDir: string): Promise<string> {
     validateDicePoolSize(dicePoolSize);
+
+    const sectionPath = join(dataDir, `table-section-${dicePoolSize}.${section}.data`);
 
     const startTime = Date.now();
     
@@ -83,8 +88,7 @@ export function generateDiceRollTableSection(dicePoolSize: number, section: numb
 
     let secondsCounter = 0;
 
-    const results: number[][] = [];
-    const resultSet = new Array(dicePoolSize).fill(1);
+    const resultSet = new Array<number>(dicePoolSize).fill(1);
     resultSet[dicePoolSize - 1] = section;
     let runTimer = startTime;
     for (let i = 0; i < generationCount; i++) {
@@ -97,41 +101,19 @@ export function generateDiceRollTableSection(dicePoolSize: number, section: numb
                 }
             }
         }
-        results.push([...resultSet]);
+        try {
+            await fs.appendFile(sectionPath, resultSet.join(",") + "\n", { encoding: "utf8" });
+        } catch (error) {
+            throw new Error(`Error appending to file '${sectionPath}': ${error.message}\n${error.stack}`);
+        }
         
         const currentTime = Date.now();
         if ((currentTime - runTimer) >= 1000) {
             runTimer = currentTime;
-            console.log(`Generating D6 table section ${section} of size ${dicePoolSize} for ${++secondsCounter} seconds...`);
+            console.log(`Generated ${(i / generationCount * 100).toFixed(1)}% of D6 table section ${section} of size ${dicePoolSize}`);
         }
     }
     const endTime = Date.now();
-    console.log(`Generating D6 table section ${section} of size ${dicePoolSize} took ${(endTime - startTime) / 1000} seconds`);
-    return {
-        dicePoolSize,
-        section,
-        results
-    };
-}
-
-export function assembleDiceRollTableSections(dicePoolSize: number, sections: RollTableSection[]): RollTable {
-    sections.sort((a, b) => a.section - b.section);
-    const results: number[][] = [];
-    for (const section of sections) {
-        for (const roll of section.results) {
-            results.push(roll);
-        }
-    }
-    return {
-        dicePoolSize,
-        results
-    }
-}
-
-export function generateDiceRollTableParallel(dicePoolSize: number): RollTable {
-    const sections: RollTableSection[] = [];
-    for (let i = 1; i <= 6 ; i++) {
-        sections[i] = generateDiceRollTableSection(dicePoolSize, i);
-    }
-    return assembleDiceRollTableSections(dicePoolSize, sections);
+    console.log(`Generated D6 table section ${section} of size ${dicePoolSize} in ${(endTime - startTime) / 1000} seconds`);
+    return sectionPath;
 }
