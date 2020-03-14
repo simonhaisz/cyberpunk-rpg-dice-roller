@@ -68,3 +68,32 @@ async function processSection(rollSummaries: RollSummary[], sectionPath: string)
         })
     });
 }
+
+const oddsOfHit = 2 / 6;
+const oddsOfMiss = 4 / 6;
+const oddsOfNotOne = 5 / 6;
+const oddsOfOne = 1 / 6
+
+export function computeProbabilitiesFromStats(dicePoolSize: number): RollProbability[] {
+    const probabilities: RollProbability[] = [];
+    const half =  Math.ceil(dicePoolSize / 2);
+    for (let hits = 0; hits <= dicePoolSize; hits++) {
+        const misses = dicePoolSize - hits;
+        const probability = Math.pow(oddsOfHit, hits) * Math.pow(oddsOfMiss, misses);
+        let glitchProbability: number;
+        if (misses >= half) {
+            glitchProbability = 0;
+            for (let ones = half; ones <= misses; ones++) {
+                glitchProbability += Math.pow(oddsOfNotOne, misses - ones) * Math.pow(oddsOfOne, ones);
+            }
+        } else {
+            glitchProbability = 0;
+        }
+        probabilities.push({
+            hits,
+            probability,
+            glitchProbability
+        });
+    }
+    return probabilities;
+}
