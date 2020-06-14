@@ -1,6 +1,7 @@
 import { createReadStream } from "fs";
 import { createInterface } from "readline";
 import { RollTable } from "./dice-table";
+import { computeChoice } from "./factorial";
 
 export type RollProbability = {
     hits: number;
@@ -84,7 +85,8 @@ export function computeProbabilitiesFromStats(dicePoolSize: number): RollProbabi
         if (misses >= half) {
             glitchProbability = 0;
             for (let ones = half; ones <= misses; ones++) {
-                glitchProbability += Math.pow(oddsOfNotOne, misses - ones) * Math.pow(oddsOfOne, ones);
+                const missesNotOnes = misses - ones;
+                glitchProbability += Math.pow(oddsOfNotOne, missesNotOnes) * computeChoice(misses, missesNotOnes) * Math.pow(oddsOfOne, ones) * computeChoice(misses, ones);
             }
         } else {
             glitchProbability = 0;
